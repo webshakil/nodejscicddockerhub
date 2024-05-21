@@ -20,11 +20,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-     
-
-      - name: Build the application
-        run: npm run build  # Adjust if you have a build step, otherwise remove this
-
       - name: Build Docker Image
         run: docker build -t hakilpro/bareminsimumnode-backend:latest .
 
