@@ -21,12 +21,12 @@ jobs:
         run: npm ci
 
       - name: Build Docker Image
-        run: docker build -t hakilpro/bareminsimumnode-backend:latest .
+        run: docker build -t shakilpro/bareminsimumnode-backend:latest .
 
       - name: Push Docker Image to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push hakilpro/bareminsimumnode-backend:latest
+          docker push shakilpro/bareminsimumnode-backend:latest
 
   deploy:
     runs-on: self-hosted 
