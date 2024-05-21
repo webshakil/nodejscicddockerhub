@@ -1,4 +1,5 @@
 name: Deploy nodejscicddockerhub
+
 on:
   push:
     branches:
@@ -7,10 +8,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+     
+
+      - name: Install dependencies
+        run: npm Install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build the application
+        run: npm run build  # Adjust if you have a build step, otherwise remove this
+
+      - name: Build Docker Image
+        run: docker build -t hakilpro/bareminsimumnode-backend:latest .
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push hakilpro/bareminsimumnode-backend:latest
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted 
     needs: build
     steps:
       - name: Checkout Source
@@ -24,9 +48,9 @@ jobs:
 
       - name: Delete Old Container
         run: |
-          if [ $(docker ps -aq -f name=hakilpro/bareminsimumnode-backend) ]; then
-            docker rm -f hakilpro/bareminsimumnode-backend
+          if [ $(docker ps -aq -f name=bareminsimumnode-backend-container) ]; then
+            docker rm -f bareminsimumnode-backend-container
           fi
 
-      - name: Run Docker Container yes
+      - name: Run Docker Container
         run: docker run -d -p 8000:8000 --name bareminsimumnode-backend-container -e MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD }}" hakilpro/bareminsimumnode-backend:latest
